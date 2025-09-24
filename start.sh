@@ -22,4 +22,4 @@ docker ps
 
 # 確認容器運行狀態
 echo "Testing 301 redirect..."
-curl -I https://smartm.blockcode.com.tw/support/where-to-buy/retailers
+curl -I https://smartm.blockcode.com.tw/support/where-to-buy/
