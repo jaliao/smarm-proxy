@@ -13,9 +13,9 @@ docker compose -f docker-compose.yml down
 echo "Starting  service..."
 docker compose -f docker-compose.yml up -d
 
-docker exec -it smartm-redirector nginx -t
+docker exec -it smarm-proxy nginx -t
 
-docker exec -it smartm-redirector nginx -s reload
+docker exec -it smarm-proxy nginx -s reload
 
 echo "Service has been started."
 docker ps

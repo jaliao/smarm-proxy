@@ -5,9 +5,9 @@
 # -----------------------------------
 
 services:
-  smartm-redirector:
+  smarm-proxy:
     image: nginx:latest
-    container_name: smartm-redirector
+    container_name: smarm-proxy
     restart: always
     expose:
       - "80"                            # 只在 docker network 內部開放
