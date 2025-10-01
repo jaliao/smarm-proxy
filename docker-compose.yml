@@ -5,69 +5,26 @@
 # -----------------------------------
 
 services:
-  # 反向代理入口（對外開 80/443）
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:latest
-    container_name: nginx-proxy
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      - ENABLE_IPV6=true
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs:ro
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    networks:
-      - nginx-proxy
-
-  # 自動簽憑證（Let’s Encrypt）
-  acme-companion:
-    image: nginxproxy/acme-companion:latest
-    container_name: ngpxyletse
-    restart: always
-    environment:
-      - DEFAULT_EMAIL=justin@blockcode.com.tw
-      # 建議先用 STAGING 乾跑；確認 DNS/80 都 OK 再註解掉以下一行回正式
-      # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - acme:/etc/acme.sh
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    depends_on:
-      - nginx-proxy
-    networks:
-      - nginx-proxy
-
-  # 你的後端站台（只需 expose 80，交給入口代理）
   smartm-proxy:
     image: nginx:latest
     container_name: smartm-proxy
     restart: always
     expose:
-      - "80"
+      - "80"                            # 只在 docker network 內部開放
+    networks:
+      - nginx-proxy
     environment:
       - TZ=Asia/Taipei
+      # 兩個對外網域都交給 jwilder 入口
       - VIRTUAL_HOST=www.smartm.com
       - LETSENCRYPT_HOST=www.smartm.com
       - LETSENCRYPT_EMAIL=justin@blockcode.com.tw
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./sites-enabled:/etc/nginx/conf.d:ro
-      - ./redirects.map.conf:/etc/nginx/redirects.map.conf:ro
-    networks:
-      - nginx-proxy
+      - ./redirects.map.conf:/etc/nginx/redirects.map.conf:ro  # 由 Excel 轉出
+      - ./acme:/var/www/acme:ro              # ★ 新增這行
 
 networks:
   nginx-proxy:
-    external: true   # 若尚未建立：docker network create nginx-proxy
-
-volumes:
-  certs:
-  vhost:
-  html:
-  acme:
+    external: true
