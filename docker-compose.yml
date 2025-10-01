@@ -23,6 +23,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./sites-enabled:/etc/nginx/conf.d:ro
       - ./redirects.map.conf:/etc/nginx/redirects.map.conf:ro  # 由 Excel 轉出
+      - ./acme:/var/www/acme:ro              # ★ 新增這行
 
 networks:
   nginx-proxy:
