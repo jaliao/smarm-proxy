@@ -20,6 +20,3 @@ docker exec -it smartm-proxy nginx -s reload
 echo "Service has been started."
 docker ps
 
-# 確認容器運行狀態
-echo "Testing 301 redirect..."
-curl -I https://smartm.blockcode.com.tw/support/where-to-buy/
